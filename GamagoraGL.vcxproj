@@ -70,24 +70,24 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>C:\Users\roroy\Documents\Romain Roy\GamagoraGL\tinyply\include;C:\Users\roroy\Documents\Romain Roy\GamagoraGL\CImg\include;C:\Users\roroy\Documents\Romain Roy\GamagoraGL\glad\include;C:\Users\roroy\Documents\Romain Roy\GamagoraGL\GLFW\include;C:\Users\roroy\Documents\Romain Roy\GamagoraGL\glm;$(IncludePath)</IncludePath>
-    <SourcePath>C:\Users\roroy\Documents\Romain Roy\GamagoraGL\glad\src;$(SourcePath)</SourcePath>
-    <LibraryPath>C:\Users\roroy\Documents\Romain Roy\GamagoraGL\GLFW\lib-vc2019;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)tinyply\include;$(ProjectDir)CImg\include;$(ProjectDir)glad\include;$(ProjectDir)GLFW\include;$(ProjectDir)glm;$(IncludePath)</IncludePath>
+    <SourcePath>$(ProjectDir)glad\src;$(SourcePath)</SourcePath>
+    <LibraryPath>$(ProjectDir)GLFW\lib-vc2019;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>C:\Users\roroy\Documents\Romain Roy\GamagoraGL\tinyply\include;C:\Users\roroy\Documents\Romain Roy\GamagoraGL\CImg\include;C:\Users\roroy\Documents\Romain Roy\GamagoraGL\glad\include;C:\Users\roroy\Documents\Romain Roy\GamagoraGL\GLFW\include;C:\Users\roroy\Documents\Romain Roy\GamagoraGL\glm;$(IncludePath)</IncludePath>
-    <SourcePath>C:\Users\roroy\Documents\Romain Roy\GamagoraGL\glad\src;$(SourcePath)</SourcePath>
-    <LibraryPath>C:\Users\roroy\Documents\Romain Roy\GamagoraGL\GLFW\lib-vc2019;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)tinyply\include;$(ProjectDir)CImg\include;$(ProjectDir)glad\include;$(ProjectDir)GLFW\include;$(ProjectDir)glm;$(IncludePath)</IncludePath>
+    <SourcePath>$(ProjectDir)glad\src;$(SourcePath)</SourcePath>
+    <LibraryPath>$(ProjectDir)GLFW\lib-vc2019;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Users\roroy\Documents\Romain Roy\GamagoraGL\tinyply\include;C:\Users\roroy\Documents\Romain Roy\GamagoraGL\CImg\include;C:\Users\roroy\Documents\Romain Roy\GamagoraGL\glad\include;C:\Users\roroy\Documents\Romain Roy\GamagoraGL\GLFW\include;C:\Users\roroy\Documents\Romain Roy\GamagoraGL\glm;$(IncludePath)</IncludePath>
-    <SourcePath>C:\Users\roroy\Documents\Romain Roy\GamagoraGL\glad\src;$(SourcePath)</SourcePath>
-    <LibraryPath>C:\Users\roroy\Documents\Romain Roy\GamagoraGL\GLFW\lib-vc2019;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)tinyply\include;$(ProjectDir)CImg\include;$(ProjectDir)glad\include;$(ProjectDir)GLFW\include;$(ProjectDir)glm;$(IncludePath)</IncludePath>
+    <SourcePath>$(ProjectDir)glad\src;$(SourcePath)</SourcePath>
+    <LibraryPath>$(ProjectDir)GLFW\lib-vc2019;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>C:\Users\roroy\Documents\Romain Roy\GamagoraGL\tinyply\include;C:\Users\roroy\Documents\Romain Roy\GamagoraGL\CImg\include;C:\Users\roroy\Documents\Romain Roy\GamagoraGL\glad\include;C:\Users\roroy\Documents\Romain Roy\GamagoraGL\GLFW\include;C:\Users\roroy\Documents\Romain Roy\GamagoraGL\glm;$(IncludePath)</IncludePath>
-    <SourcePath>C:\Users\roroy\Documents\Romain Roy\GamagoraGL\glad\src;$(SourcePath)</SourcePath>
-    <LibraryPath>C:\Users\roroy\Documents\Romain Roy\GamagoraGL\GLFW\lib-vc2019;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)tinyply\include;$(ProjectDir)CImg\include;$(ProjectDir)glad\include;$(ProjectDir)GLFW\include;$(ProjectDir)glm;$(IncludePath)</IncludePath>
+    <SourcePath>$(ProjectDir)glad\src;$(SourcePath)</SourcePath>
+    <LibraryPath>$(ProjectDir)GLFW\lib-vc2019;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
