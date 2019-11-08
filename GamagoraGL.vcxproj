@@ -150,23 +150,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="default.nix" />
-    <None Include="logo.stl" />
-    <None Include="Makefile" />
-    <None Include="shader.frag" />
-    <None Include="shader.vert" />
+    <None Include="shaders\shader.frag" />
+    <None Include="shaders\shader.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad\src\glad.c" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="objloader.cpp" />
-    <ClCompile Include="texture.cpp" />
-    <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="utils\objloader.cpp" />
+    <ClCompile Include="utils\texture.cpp" />
+    <ClCompile Include="utils\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="objloader.hpp" />
-    <ClInclude Include="texture.h" />
-    <ClInclude Include="Timer.h" />
+    <ClInclude Include="utils\objloader.hpp" />
+    <ClInclude Include="utils\texture.h" />
+    <ClInclude Include="utils\Timer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

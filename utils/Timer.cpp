@@ -1,7 +1,5 @@
 #include "Timer.h"
 
-
-
 void Timer::reset()
 {
 	anchor = Clock::now();

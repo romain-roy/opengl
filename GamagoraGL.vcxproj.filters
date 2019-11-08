@@ -13,40 +13,50 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\utils">
+      <UniqueIdentifier>{8b598f9f-235c-4181-8c73-202d99c24cac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\utils">
+      <UniqueIdentifier>{c9663868-c3f6-4067-adf3-c9db2bf4c4dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{60158d78-0202-4074-bb2e-0d400a489392}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="default.nix" />
-    <None Include="logo.stl" />
-    <None Include="Makefile" />
-    <None Include="shader.frag" />
-    <None Include="shader.vert" />
+    <None Include="shaders\shader.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\shader.vert">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="texture.cpp">
-      <Filter>Fichiers sources</Filter>
+    <ClCompile Include="utils\Timer.cpp">
+      <Filter>Fichiers sources\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\objloader.cpp">
+      <Filter>Fichiers sources\utils</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\texture.cpp">
+      <Filter>Fichiers sources\utils</Filter>
     </ClCompile>
     <ClCompile Include="glad\src\glad.c">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="objloader.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Timer.cpp">
-      <Filter>Fichiers sources</Filter>
+      <Filter>Fichiers sources\utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="texture.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="utils\objloader.hpp">
+      <Filter>Fichiers d%27en-tête\utils</Filter>
     </ClInclude>
-    <ClInclude Include="objloader.hpp">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="utils\Timer.h">
+      <Filter>Fichiers d%27en-tête\utils</Filter>
     </ClInclude>
-    <ClInclude Include="Timer.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="utils\texture.h">
+      <Filter>Fichiers d%27en-tête\utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

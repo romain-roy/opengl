@@ -17,10 +17,10 @@ void main()
 {
 	vec3 lightDirection = normalize(light.position - positionOut);
 
-	//Ambient component
+	// Ambient component
 	vec3 ambient = vec3(0.1);
 
-	//Diffuse component
+	// Diffuse component
 	float angle = max(0.0, dot(normalOut, lightDirection));
 	vec3 diffuse = angle * light.color;
 
