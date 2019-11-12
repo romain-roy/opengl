@@ -8,10 +8,12 @@ struct Light
 
 in vec3 normalOut;
 in vec3 positionOut;
+in vec2 uvOut;
 
 out vec4 color;
 
 uniform Light light;
+uniform sampler2D textureSampler;
 
 void main()
 {
@@ -25,5 +27,10 @@ void main()
 	vec3 diffuse = angle * light.color;
 
 	vec3 combined = ambient + diffuse;
-	color = vec4(combined, 1.0);
+
+	// color = vec4(combined, 1.0);
+	
+	// color = vec4(uvOut, 1.0, 1.0);
+
+	color = texture2D(textureSampler, uvOut);
 }

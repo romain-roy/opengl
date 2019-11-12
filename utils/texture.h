@@ -8,4 +8,4 @@ struct Image
 	int width, height;
 };
 
-Image LoadImage(const char *filename);
+Image LoadImage(const char* filename);

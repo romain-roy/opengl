@@ -2,7 +2,7 @@
 
 #include "texture.h"
 
-Image LoadImage(const char *filename)
+Image LoadImage(const char* filename)
 {
 	cimg_library::CImg<unsigned char> im(filename);
 
@@ -13,5 +13,5 @@ Image LoadImage(const char *filename)
 		picture.push_back(im(x, im.height() - y - 1, 0, 2));
 	}
 
-	return {picture, im.width(), im.height()};
+	return { picture, im.width(), im.height() };
 }

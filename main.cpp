@@ -6,6 +6,7 @@
 #include <glm/gtx/string_cast.hpp>
 
 #include "utils/Timer.h"
+#include "utils/texture.h"
 #include "utils/objloader.hpp"
 
 #include <vector>
@@ -18,7 +19,10 @@
 #define TINYPLY_IMPLEMENTATION
 #include <tinyply.h>
 
-glm::vec3 position = glm::vec3(0.f, 0.f, 5.f);
+int width = 960;
+int height = 720;
+
+glm::vec3 position = glm::vec3(0.f, 0.f, 12.f);
 float pitch = 0.f, yaw = 0.f;
 float speed = 5.f, mouseSpeed = 0.005;
 
@@ -155,7 +159,7 @@ int main(void)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
-	window = glfwCreateWindow(640, 480, "OpenGL Gamagora", NULL, NULL);
+	window = glfwCreateWindow(width, height, "OpenGL Gamagora", NULL, NULL);
 
 	if (!window)
 	{
@@ -178,11 +182,12 @@ int main(void)
 	std::vector<glm::vec2> uvs;
 	std::vector<glm::vec3> normals;
 
-	loadOBJ("assets/cube.obj", vertices, uvs, normals);
+	loadOBJ("assets/majora.obj", vertices, uvs, normals);
 
 	// Callbacks
 
 	glDebugMessageCallback(opengl_error_callback, nullptr);
+	// glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 
 	// Shader
 
@@ -217,12 +222,20 @@ int main(void)
 	if (!uvs.empty())
 		glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(glm::vec2), &uvs[0], GL_STATIC_DRAW);
 
-
 	GLuint normalBuffer;
 	glGenBuffers(1, &normalBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, normalBuffer);
 	if (!normals.empty())
-		glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec2), &normals[0], GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(glm::vec3), &normals[0], GL_STATIC_DRAW);
+
+	Image myTexture = LoadImage("assets/majora.bmp");
+
+	unsigned int textureBuffer;
+	
+	glCreateTextures(GL_TEXTURE_2D, 1, &textureBuffer);
+	glTextureStorage2D(textureBuffer, 1, GL_RGB8, myTexture.width, myTexture.height);
+	glTextureSubImage2D(textureBuffer, 0, 0, 0, myTexture.width, myTexture.height, GL_RGB, GL_UNSIGNED_BYTE, myTexture.data.data());
+	glBindTextureUnit(0, textureBuffer);
 
 	// Bindings
 
@@ -253,46 +266,45 @@ int main(void)
 	float rotateXY = 0.f;
 	Timer dt, age;
 
+	// glClearColor(1.0, 1.0, 1.0, 1.0); // Fond blanc
+
 	while (!glfwWindowShouldClose(window))
 	{
 		float deltaTime = dt.elapsed(); // in seconds
 		dt.reset();
 		processCameraInput(window, deltaTime);
 
-		int width, height;
-		glfwGetFramebufferSize(window, &width, &height);
+		int fameWidth, frameHeight;
+		glfwGetFramebufferSize(window, &fameWidth, &frameHeight);
 
-		glViewport(0, 0, width, height);
+		glViewport(0, 0, fameWidth, frameHeight);
 
 		rotateXY += 0.01f;
 		if (rotateXY >= 360.f) rotateXY -= 360.f;
 
 		scalingMatrix = glm::scale(glm::vec3(1.f, 1.f, 1.f));
 		translateMatrix = glm::translate(glm::vec3(0.f, 0.f, 0.f));
-		rotateMatrix = glm::rotate(rotateXY, glm::vec3(1.f, 1.f, 0.f));
+		rotateMatrix = glm::rotate(rotateXY, glm::vec3(0.f, 1.f, 0.f));
 
 		view = glm::rotate(pitch, glm::vec3(1.f, 0.f, 0.f)) * glm::rotate(yaw, glm::vec3(0.f, 1.f, 0.f)) * glm::translate(-position);
 
-		projection = glm::perspective(glm::radians(45.f), (float)width / (float)height, 0.1f, 100.f);
+		projection = glm::perspective(glm::radians(45.f), (float)fameWidth / (float)frameHeight, 0.1f, 100.f);
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		for (int i = -1; i <= 1; i++)
-		{
-			translateMatrix = glm::translate(glm::vec3(2 * i, 0, 0));
-			model = translateMatrix * rotateMatrix * scalingMatrix;
+		translateMatrix = glm::translate(glm::vec3(0, 0, 0));
+		model = translateMatrix * rotateMatrix * scalingMatrix;
 
-			glProgramUniformMatrix4fv(program, glGetUniformLocation(program, "projection"), 1, GL_FALSE, &projection[0][0]);
-			glProgramUniformMatrix4fv(program, glGetUniformLocation(program, "view"), 1, GL_FALSE, &view[0][0]);
-			glProgramUniformMatrix4fv(program, glGetUniformLocation(program, "model"), 1, GL_FALSE, &model[0][0]);
+		glProgramUniformMatrix4fv(program, glGetUniformLocation(program, "projection"), 1, GL_FALSE, &projection[0][0]);
+		glProgramUniformMatrix4fv(program, glGetUniformLocation(program, "view"), 1, GL_FALSE, &view[0][0]);
+		glProgramUniformMatrix4fv(program, glGetUniformLocation(program, "model"), 1, GL_FALSE, &model[0][0]);
 
-			// Light on camera
+		// Light on camera
 
-			glProgramUniform3f(program, glGetUniformLocation(program, "light.position"), 5 * std::cos(age.elapsed()), 5, 3 * std::sin(age.elapsed()));
-			glProgramUniform3f(program, glGetUniformLocation(program, "light.color"), std::abs(std::sin(age.elapsed())), 0, std::abs(std::cos(age.elapsed())));
+		glProgramUniform3f(program, glGetUniformLocation(program, "light.position"), 5 * std::cos(age.elapsed()), 5, 3 * std::sin(age.elapsed()));
+		glProgramUniform3f(program, glGetUniformLocation(program, "light.color"), std::abs(std::sin(age.elapsed())), 0, std::abs(std::cos(age.elapsed())));
 
-			glDrawArrays(GL_TRIANGLES, 0, vertices.size() * 3);
-		}
+		glDrawArrays(GL_TRIANGLES, 0, vertices.size() * 3);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
