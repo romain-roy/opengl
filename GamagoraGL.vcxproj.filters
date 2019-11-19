@@ -30,6 +30,12 @@
     <None Include="shaders\shader.vert">
       <Filter>shaders</Filter>
     </None>
+    <None Include="shaders\shaderQuad.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shaders\shaderQuad.frag">
+      <Filter>shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

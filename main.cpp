@@ -147,6 +147,10 @@ void APIENTRY opengl_error_callback(GLenum source,
 	std::cout << message << std::endl;
 }
 
+void debugFramebuffer(GLuint framebuffer);
+
+void drawQuad(GLFWwindow* window, GLuint shader, glm::vec2 position, glm::vec2 size, GLuint texture = 0);
+
 int main(void)
 {
 	if (!glfwInit())
@@ -193,10 +197,11 @@ int main(void)
 
 	const auto vertex = MakeShader(GL_VERTEX_SHADER, "shaders/shader.vert");
 	const auto fragment = MakeShader(GL_FRAGMENT_SHADER, "shaders/shader.frag");
-
 	const auto program = AttachAndLink({ vertex, fragment });
 
-	glUseProgram(program);
+	const auto vertexQuad = MakeShader(GL_VERTEX_SHADER, "shaders/shaderQuad.vert");
+	const auto fragmentQuad = MakeShader(GL_FRAGMENT_SHADER, "shaders/shaderQuad.frag");
+	const auto programQuad = AttachAndLink({ vertexQuad, fragmentQuad });
 
 	// Vertex Arrays
 
@@ -231,14 +236,30 @@ int main(void)
 	Image myTexture = LoadImage("assets/majora.bmp");
 
 	GLuint textureBuffer;
-	
 	glCreateTextures(GL_TEXTURE_2D, 1, &textureBuffer);
 	glTextureStorage2D(textureBuffer, 1, GL_RGB8, myTexture.width, myTexture.height);
 	glTextureSubImage2D(textureBuffer, 0, 0, 0, myTexture.width, myTexture.height, GL_RGB, GL_UNSIGNED_BYTE, myTexture.data.data());
-	glBindTextureUnit(0, textureBuffer);
 
+	unsigned int fboWidth = width * 4;
+	unsigned int fboHeight = height * 4;
+
+	GLuint fbo;
+	glGenFramebuffers(1, &fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+	GLuint colorTexture;
+	glCreateTextures(GL_TEXTURE_2D, 1, &colorTexture);
+	glTextureStorage2D(colorTexture, 1, GL_RGB8, fboWidth, fboHeight);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, colorTexture, 0);
+
+	GLuint depthTexture;
+	glCreateTextures(GL_TEXTURE_2D, 1, &depthTexture);
+	glTextureStorage2D(depthTexture, 1, GL_DEPTH_COMPONENT16, fboWidth, fboHeight);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depthTexture, 0);
+
+	debugFramebuffer(fbo);
+ 
 	// Bindings
-
 	{
 		int location = glGetAttribLocation(program, "position");
 		glEnableVertexAttribArray(location);
@@ -277,7 +298,10 @@ int main(void)
 		int frameWidth, frameHeight;
 		glfwGetFramebufferSize(window, &frameWidth, &frameHeight);
 
-		glViewport(0, 0, frameWidth, frameHeight);
+		// Draw to custom FBO
+		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+		glViewport(0, 0, fboWidth, fboHeight);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// rotateXY += 0.01f;
 		if (rotateXY >= 360.f) rotateXY -= 360.f;
@@ -292,8 +316,9 @@ int main(void)
 
 		projection = glm::perspective(glm::radians(45.f), (float)frameWidth / (float)frameHeight, 0.1f, 100.f);
 
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+		glUseProgram(program);
+		glBindTextureUnit(1, textureBuffer);
+		glProgramUniform1i(program, glGetUniformLocation(program, "textureSampler"), 1);
 		glProgramUniformMatrix4fv(program, glGetUniformLocation(program, "projection"), 1, GL_FALSE, &projection[0][0]);
 		glProgramUniformMatrix4fv(program, glGetUniformLocation(program, "view"), 1, GL_FALSE, &view[0][0]);
 		glProgramUniformMatrix4fv(program, glGetUniformLocation(program, "model"), 1, GL_FALSE, &model[0][0]);
@@ -303,7 +328,14 @@ int main(void)
 		glProgramUniform3f(program, glGetUniformLocation(program, "light.position"), 3 * std::cos(age.elapsed() * 3), -15, 30 - 3 * std::sin(age.elapsed() * 3));
 		glProgramUniform3f(program, glGetUniformLocation(program, "light.color"), std::abs(std::sin(age.elapsed())) * 3, std::abs(std::sin(age.elapsed())) / 2, 0);
 
+		glBindVertexArray(VertexArrayID);
 		glDrawArrays(GL_TRIANGLES, 0, vertices.size() * 3);
+
+		// Draw on Default Frambuffer
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glViewport(0, 0, frameWidth, frameHeight);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		drawQuad(window, programQuad, glm::vec2(0, 0), glm::vec2(frameWidth, frameHeight), colorTexture);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -311,4 +343,112 @@ int main(void)
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	exit(EXIT_SUCCESS);
+}
+
+void drawQuad(GLFWwindow* window, GLuint shader, glm::vec2 position, glm::vec2 size, GLuint texture)
+{
+	int frameWidth, frameHeight;
+	glfwGetFramebufferSize(window, &frameWidth, &frameHeight);
+	glm::mat4 projection = glm::ortho(0.f, (float)frameWidth, (float)frameHeight, 0.f);
+
+	float l = position.x;			// left
+	float r = position.x + size.x;	// right
+	float t = position.y;			// top
+	float b = position.y + size.y;	// bottom
+
+	std::vector<glm::vec3> positions;
+	std::vector<glm::vec2> uvs;
+
+	positions.push_back(glm::vec3(l, b, 0)); uvs.push_back(glm::vec2(0, 0)); // Vertex 0
+	positions.push_back(glm::vec3(r, b, 0)); uvs.push_back(glm::vec2(1, 0)); // Vertex 1
+	positions.push_back(glm::vec3(r, t, 0)); uvs.push_back(glm::vec2(1, 1)); // Vertex 2
+	positions.push_back(glm::vec3(l, t, 0)); uvs.push_back(glm::vec2(0, 1)); // Vertex 3
+
+	std::vector<unsigned int> indices;
+	// Triangle 1
+	indices.push_back(0); indices.push_back(1); indices.push_back(2);
+	// Triangle 2
+	indices.push_back(2); indices.push_back(3);	indices.push_back(0);
+
+	// Index Buffer
+	GLuint ibo;
+	glGenBuffers(1, &ibo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(glm::vec3), indices.data(), GL_STATIC_DRAW);
+
+	// Vertex Array
+	GLuint vao;
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+
+	GLuint vertexBuffer;
+	glGenBuffers(1, &vertexBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, positions.size() * sizeof(glm::vec3), positions.data(), GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)0);
+
+	GLuint uvBuffer;
+	glGenBuffers(1, &uvBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, uvBuffer);
+	glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(glm::vec3), uvs.data(), GL_STATIC_DRAW);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(glm::vec2), (void*)0);
+
+	// Configure Shader
+	glUseProgram(shader);
+	glUniformMatrix4fv(glGetUniformLocation(shader, "projection"), 1, GL_FALSE, &projection[0][0]);
+	glBindTextureUnit(0, texture);
+	glUniform1i(glGetUniformLocation(shader, "textureSampler"), 0);
+
+	// Draw Call
+	glBindVertexArray(vao);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr);
+
+	glDeleteVertexArrays(1, &vao);
+	glDeleteBuffers(1, &vertexBuffer);
+	glDeleteBuffers(1, &uvBuffer);
+}
+
+void debugFramebuffer(GLuint framebuffer)
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	switch (glCheckFramebufferStatus(GL_FRAMEBUFFER))
+	{
+	case GL_FRAMEBUFFER_COMPLETE:
+		std::cout << "Framebuffer is complete" << std::endl;
+		break;
+
+	case GL_FRAMEBUFFER_UNDEFINED:
+		std::cout << "Framebuffer doesn't exist" << std::endl;
+		break;
+
+	case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+		std::cout << "Framebuffer contains at least one attachement that is incomplete" << std::endl;
+		break;
+
+	case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+		std::cout << "Framebuffer has no attached Textures" << std::endl;
+		break;
+
+	case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
+		std::cout << "Framebuffer draw target is incomplete" << std::endl;
+		break;
+
+	case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
+		std::cout << "Framebuffer read target is incomplete" << std::endl;
+		break;
+
+	default:
+		std::cout << "Framebuffer is unsupported" << std::endl;
+		break;
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		std::cout << "Press any key to Continue..." << std::endl;
+		std::cin.get();
+	}
 }
