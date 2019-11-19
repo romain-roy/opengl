@@ -23,14 +23,12 @@ void main()
 	vec3 ambient = vec3(0.1);
 
 	// Diffuse component
-	float angle = max(0.0, dot(normalOut, lightDirection));
+	float angle = max(0.0, dot(texture2D(textureSampler, uvOut).rgb, lightDirection));
 	vec3 diffuse = angle * light.color;
 
 	vec3 combined = ambient + diffuse;
 
 	// color = vec4(combined, 1.0);
-	
-	// color = vec4(uvOut, 1.0, 1.0);
 
 	color = texture2D(textureSampler, uvOut);
 }

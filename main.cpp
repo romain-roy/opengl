@@ -230,7 +230,7 @@ int main(void)
 
 	Image myTexture = LoadImage("assets/majora.bmp");
 
-	unsigned int textureBuffer;
+	GLuint textureBuffer;
 	
 	glCreateTextures(GL_TEXTURE_2D, 1, &textureBuffer);
 	glTextureStorage2D(textureBuffer, 1, GL_RGB8, myTexture.width, myTexture.height);
@@ -274,26 +274,25 @@ int main(void)
 		dt.reset();
 		processCameraInput(window, deltaTime);
 
-		int fameWidth, frameHeight;
-		glfwGetFramebufferSize(window, &fameWidth, &frameHeight);
+		int frameWidth, frameHeight;
+		glfwGetFramebufferSize(window, &frameWidth, &frameHeight);
 
-		glViewport(0, 0, fameWidth, frameHeight);
+		glViewport(0, 0, frameWidth, frameHeight);
 
-		rotateXY += 0.01f;
+		// rotateXY += 0.01f;
 		if (rotateXY >= 360.f) rotateXY -= 360.f;
 
 		scalingMatrix = glm::scale(glm::vec3(1.f, 1.f, 1.f));
-		translateMatrix = glm::translate(glm::vec3(0.f, 0.f, 0.f));
+		translateMatrix = glm::translate(glm::vec3(0.f, 1.f, 0.f));
 		rotateMatrix = glm::rotate(rotateXY, glm::vec3(0.f, 1.f, 0.f));
+
+		model = translateMatrix * rotateMatrix * scalingMatrix;
 
 		view = glm::rotate(pitch, glm::vec3(1.f, 0.f, 0.f)) * glm::rotate(yaw, glm::vec3(0.f, 1.f, 0.f)) * glm::translate(-position);
 
-		projection = glm::perspective(glm::radians(45.f), (float)fameWidth / (float)frameHeight, 0.1f, 100.f);
+		projection = glm::perspective(glm::radians(45.f), (float)frameWidth / (float)frameHeight, 0.1f, 100.f);
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		translateMatrix = glm::translate(glm::vec3(0, 0, 0));
-		model = translateMatrix * rotateMatrix * scalingMatrix;
 
 		glProgramUniformMatrix4fv(program, glGetUniformLocation(program, "projection"), 1, GL_FALSE, &projection[0][0]);
 		glProgramUniformMatrix4fv(program, glGetUniformLocation(program, "view"), 1, GL_FALSE, &view[0][0]);
@@ -301,8 +300,8 @@ int main(void)
 
 		// Light on camera
 
-		glProgramUniform3f(program, glGetUniformLocation(program, "light.position"), 5 * std::cos(age.elapsed()), 5, 3 * std::sin(age.elapsed()));
-		glProgramUniform3f(program, glGetUniformLocation(program, "light.color"), std::abs(std::sin(age.elapsed())), 0, std::abs(std::cos(age.elapsed())));
+		glProgramUniform3f(program, glGetUniformLocation(program, "light.position"), 3 * std::cos(age.elapsed() * 3), -15, 30 - 3 * std::sin(age.elapsed() * 3));
+		glProgramUniform3f(program, glGetUniformLocation(program, "light.color"), std::abs(std::sin(age.elapsed())) * 3, std::abs(std::sin(age.elapsed())) / 2, 0);
 
 		glDrawArrays(GL_TRIANGLES, 0, vertices.size() * 3);
 
