@@ -150,10 +150,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="shaders\debug_quad.vert" />
+    <None Include="shaders\debug_quad_depth.frag" />
     <None Include="shaders\shader.frag" />
     <None Include="shaders\shader.vert" />
     <None Include="shaders\shaderQuad.frag" />
     <None Include="shaders\shaderQuad.vert" />
+    <None Include="shaders\shadow_mapping.frag" />
+    <None Include="shaders\shadow_mapping.vert" />
+    <None Include="shaders\shadow_mapping_depth.frag" />
+    <None Include="shaders\shadow_mapping_depth.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad\src\glad.c" />
@@ -163,6 +169,8 @@
     <ClCompile Include="utils\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="utils\Shader.h" />
+    <ClInclude Include="utils\stb_image.h" />
     <ClInclude Include="utils\objloader.hpp" />
     <ClInclude Include="utils\texture.h" />
     <ClInclude Include="utils\Timer.h" />
