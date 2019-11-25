@@ -105,7 +105,7 @@ void renderCube();
 void renderMajoraMask();
 void renderQuad();
 
-glm::vec3 position = glm::vec3(0.f, 0.f, 12.f);
+glm::vec3 position = glm::vec3(0.f, 2.f, 10.f);
 glm::vec2 lmp;
 float pitch = 0.f, yaw = 0.f;
 float speed = 5.f, mouseSpeed = 0.005;
@@ -189,7 +189,7 @@ int main(void)
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glBindVertexArray(0);
 
-	unsigned int woodTexture = loadTexture("assets/wood.png");
+	unsigned int woodTexture = loadTexture("assets/grass.png");
 
 	// Configure depth map FBO
 
@@ -234,7 +234,7 @@ int main(void)
 
 	// Lighting info
 
-	glm::vec3 lightPos(-2.0f, 4.0f, -1.0f);
+	glm::vec3 lightPos(-2.0f, 4.0f, 1.0f);
 
 	// Callbacks
 
@@ -257,7 +257,7 @@ int main(void)
 
 		processCameraInput(window, deltaTime);
 
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClearColor(124.f / 255.f, 173.f / 255.f, 206.f / 255.f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glm::mat4 lightProjection, lightView;
