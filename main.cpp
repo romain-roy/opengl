@@ -121,6 +121,10 @@ GLuint planeVAO;
 
 unsigned int majoraTexture;
 
+std::vector<glm::vec3> majoraVertices;
+std::vector<glm::vec2> majoraUvs;
+std::vector<glm::vec3> majoraNormals;
+
 int main(void)
 {
 	if (!glfwInit())
@@ -244,6 +248,8 @@ int main(void)
 	glm::mat4 view, projection;
 
 	majoraTexture = loadTexture("assets/majora.png");
+
+	loadOBJ("assets/majora.obj", majoraVertices, majoraUvs, majoraNormals);
 
 	float rotate = 0.f;
 
@@ -455,17 +461,12 @@ GLuint majoraVAO = 0;
 GLuint majoraVBO = 0;
 GLuint majoraUVsBuffer = 0;
 GLuint majoraNormalsBuffer = 0;
-std::vector<glm::vec3> majoraVertices;
-std::vector<glm::vec2> majoraUvs;
-std::vector<glm::vec3> majoraNormals;
 
 void renderMajoraMask()
 {
 	// initialize (if necessary)
 	if (majoraVAO == 0)
 	{
-		loadOBJ("assets/majora.obj", majoraVertices, majoraUvs, majoraNormals);
-
 		glGenVertexArrays(1, &majoraVAO);
 
 		glGenBuffers(1, &majoraVBO);
