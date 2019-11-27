@@ -12,4 +12,4 @@ Prochaine étape : Ajout d'effets de particules
 
 ###### Capture
 
-![Capture](/images/screenshot.png)
+![Capture](/images/capture.gif)
