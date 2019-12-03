@@ -1,4 +1,4 @@
-# Apprentissage de OpenGL
+# OpenGL 3D
 
 ### Historique du projet
 
