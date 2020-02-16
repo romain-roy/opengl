@@ -7,7 +7,7 @@
 3. Ajout des textures
 4. Ajout des framebuffers
 5. Ajout des ombres
-6. Effet de particules (voir ici : [particles-opengl](https://github.com/rroyromain/particles-opengl))
+6. Effet de particules (voir ici : [particles-opengl](https://github.com/romain-roy/particles-opengl))
 
 ###### Capture
 
